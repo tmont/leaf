@@ -74,6 +74,26 @@ var validators = {
 				return 'Must be a number';
 			}
 		};
+	},
+	boolean: function(strict) {
+		return {
+			validate: function(value, context, callback) {
+				var isValid = typeof(value) === 'boolean';
+				if (!isValid && !strict) {
+					if (typeof(value) === 'string') {
+						value = value.toLowerCase();
+						isValid = value === '0' || value === '1' || value === 'true' || value === 'false';
+					} else {
+						isValid = value === 0 || value === 1;
+					}
+				}
+
+				callback(isValid ? null : true);
+			},
+			getErrorMessage: function() {
+				return 'Must be a boolean';
+			}
+		};
 	}
 };
 

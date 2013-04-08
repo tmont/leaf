@@ -282,4 +282,89 @@ describe('Validators', function() {
 			validators.number().getErrorMessage().should.equal('Must be a number');
 		});
 	});
+
+	describe('boolean', function() {
+		it('should validate boolean', function(done) {
+			validators.boolean().validate(true, null, function(err) {
+				should.not.exist(err);
+				validators.boolean().validate(false, null, function(err) {
+					should.not.exist(err);
+
+					//strict mode
+					validators.boolean(true).validate(true, null, function(err) {
+						should.not.exist(err);
+						validators.boolean(true).validate(false, null, function(err) {
+							should.not.exist(err);
+							done();
+						});
+					});
+				});
+			});
+		});
+
+		it('should validate string "true" and "false", ignoring case', function(done) {
+			validators.boolean().validate('true', null, function(err) {
+				should.not.exist(err);
+				validators.boolean().validate('TRUE', null, function(err) {
+					should.not.exist(err);
+					validators.boolean().validate('false', null, function(err) {
+						should.not.exist(err);
+						validators.boolean().validate('FALSE', null, function(err) {
+							should.not.exist(err);
+							done();
+						});
+					});
+				});
+			});
+		});
+
+		it('should validate number/string "0" and "1"', function(done) {
+			validators.boolean().validate('0', null, function(err) {
+				should.not.exist(err);
+				validators.boolean().validate('1', null, function(err) {
+					should.not.exist(err);
+					validators.boolean().validate(0, null, function(err) {
+						should.not.exist(err);
+						validators.boolean().validate(1, null, function(err) {
+							should.not.exist(err);
+							validators.boolean().validate('asdf', null, function(err) {
+								err.should.equal(true);
+								validators.boolean().validate(100, null, function(err) {
+									err.should.equal(true);
+									done();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		it('should not validate strings/numbers in strict mode', function(done) {
+			var validator = validators.boolean(true);
+			validator.validate('0', null, function(err) {
+				err.should.equal(true);
+				validator.validate('1', null, function(err) {
+					err.should.equal(true);
+					validator.validate(0, null, function(err) {
+						err.should.equal(true);
+						validator.validate(1, null, function(err) {
+							err.should.equal(true);
+							validator.validate('true', null, function(err) {
+								err.should.equal(true);
+								validator.validate('false', null, function(err) {
+									err.should.equal(true);
+									done();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		it('should get error message', function() {
+			validators.boolean().getErrorMessage().should.equal('Must be a boolean');
+		});
+	});
 });
