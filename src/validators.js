@@ -62,6 +62,18 @@ var validators = {
 					' characters';
 			}
 		};
+	},
+	number: function(infinityIsANumber) {
+		return {
+			validate: function(value, context, callback) {
+				value = parseFloat(value);
+				var isValid = !isNaN(value) && (infinityIsANumber || (value !== -Infinity && value !== Infinity));
+				callback(isValid ? null : true);
+			},
+			getErrorMessage: function() {
+				return 'Must be a number';
+			}
+		};
 	}
 };
 

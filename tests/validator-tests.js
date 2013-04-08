@@ -224,4 +224,62 @@ describe('Validators', function() {
 			validators.required().getErrorMessage().should.equal('This field is required');
 		});
 	});
+
+	describe('number', function() {
+		it('should validate integer', function(done) {
+			validators.number().validate(42, null, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should validate float', function(done) {
+			validators.number().validate(42, null, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should parse string as number', function(done) {
+			validators.number().validate('42', null, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should not validate things that are not numbers', function(done) {
+			var validator = validators.number();
+			validator.validate([], null, function(err) {
+				err.should.equal(true);
+				validator.validate({}, null, function(err) {
+					err.should.equal(true);
+					validator.validate(Infinity, null, function(err) {
+						err.should.equal(true);
+						validator.validate(-Infinity, null, function(err) {
+							err.should.equal(true);
+							validator.validate(null, null, function(err) {
+								err.should.equal(true);
+								done();
+							});
+						});
+					});
+				});
+			});
+		});
+
+		it('should validate Infinity as a number if specified', function(done) {
+			var validator = validators.number(true);
+			validator.validate(Infinity, null, function(err) {
+				should.not.exist(err);
+				validator.validate(-Infinity, null, function(err) {
+					should.not.exist(err);
+					done();
+				});
+			});
+		});
+
+		it('should get error message', function() {
+			validators.number().getErrorMessage().should.equal('Must be a number');
+		});
+	});
 });
