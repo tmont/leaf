@@ -159,8 +159,16 @@ describe('Validation', function() {
 		it('should create validator', function() {
 			var map = {
 				foo: function(arg1, arg2) {
-					this.arg1 = arg1;
-					this.arg2 = arg2;
+					return {
+						arg1: arg1,
+						arg2: arg2,
+						validate: function() {
+
+						},
+						getErrorMessage: function() {
+
+						}
+					};
 				}
 			};
 
@@ -176,6 +184,64 @@ describe('Validation', function() {
 
 			Object.keys(validators).forEach(function(name) {
 				factory.map.should.have.property(name);
+			});
+		});
+	});
+
+	describe('for entities', function() {
+		function User() {
+			/**
+			 * @validator required
+			 * @validator email
+			 */
+			this.email = '';
+
+			/**
+			 * @validator required
+			 * @validator length(3, 30)
+			 */
+			this.username = '';
+
+			/**
+			 * @validator values([ 'admin', 'mod', 'user' ])
+			 */
+			this.role = null;
+		}
+
+		it('should validate entity successfully', function(done) {
+			var validator = new leaf.Validator(User),
+				user = new User();
+
+			user.email = 'foo@bar.com';
+			user.username = 'tmont';
+			user.role = 'admin';
+			validator.validate(user, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should validate entity and aggregate errors', function(done) {
+			var validator = new leaf.Validator(User),
+				user = new User();
+
+			user.username = 'x';
+
+			validator.validate(user, function(err) {
+				should.exist(err);
+				err.should.have.property('role');
+				err.role.should.have.length(1);
+				err.role[0].should.equal('Must be "admin", "mod" or "user"');
+
+				err.should.have.property('username');
+				err.username.should.have.length(1);
+				err.username[0].should.equal('Must be between 3 and 30 characters');
+
+				err.should.have.property('email');
+				err.email.should.have.length(2);
+				err.email[0].should.equal('Must be a valid email address');
+				err.email[1].should.equal('This field is required');
+				done();
 			});
 		});
 	});

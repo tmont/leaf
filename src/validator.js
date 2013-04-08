@@ -77,9 +77,7 @@ ValidatorFactory.prototype = {
 			throw new Error('Cannot create validator "' + name + '"');
 		}
 
-		var validator = Object.create(this.map[name]);
-		this.map[name].apply(validator, args);
-		return validator;
+		return this.map[name].apply(null, args);
 	}
 };
 
@@ -89,18 +87,28 @@ function EntityValidator(ctor, factory) {
 
 EntityValidator.prototype = {
 	validate: function(entity, callback) {
-		var self = this;
-		var toValidate = Object.keys(entity);
-		var errors = [];
+		var self = this,
+			toValidate = Object.keys(entity),
+			errors = null;
+
 		(function validate(property) {
 			 if (!property) {
 				 //all done
-				 process.nextTick(callback(errors.length ? errors : null));
+				 process.nextTick(function() {
+					 callback(errors);
+				 });
 				 return;
 			 }
 
 			self.validateProperty(entity, property, function(err) {
-				err && errors.push(err);
+				if (err) {
+					if (!errors) {
+						errors = {};
+					}
+
+					errors[property] = err;
+				}
+
 				process.nextTick(function() {
 					validate(toValidate.pop());
 				});
@@ -109,13 +117,30 @@ EntityValidator.prototype = {
 	},
 
 	validateProperty: function(entity, property, callback) {
-		var validator = this.properties[property];
-		if (!validator) {
+		var validators = this.properties[property],
+			errors = [],
+			value = entity[property];
+		if (!validators || !validators.length) {
 			callback();
 			return;
 		}
 
-		validator.validate(entity[property], entity, callback);
+		(function validate(validator) {
+			if (!validator) {
+				//all done
+				process.nextTick(function() {
+					callback(errors.length ? errors : null)
+				});
+				return;
+			}
+
+			validator.validate(value, entity, function(err) {
+				err && errors.push(validator.getErrorMessage());
+				process.nextTick(function() {
+					validate(validators.pop());
+				});
+			});
+		})(validators.pop());
 	}
 };
 
