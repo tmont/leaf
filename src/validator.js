@@ -110,10 +110,10 @@ EntityValidator.prototype = {
 				}
 
 				process.nextTick(function() {
-					validate(toValidate.pop());
+					validate(toValidate.shift());
 				});
 			});
-		})(toValidate.pop());
+		})(toValidate.shift());
 	},
 
 	validateProperty: function(entity, property, callback) {
@@ -137,10 +137,10 @@ EntityValidator.prototype = {
 			validator.validate(value, entity, function(err) {
 				err && errors.push(validator.getErrorMessage());
 				process.nextTick(function() {
-					validate(validators.pop());
+					validate(validators.shift());
 				});
 			});
-		})(validators.pop());
+		})(validators.shift());
 	}
 };
 

@@ -239,8 +239,8 @@ describe('Validation', function() {
 
 				err.should.have.property('email');
 				err.email.should.have.length(2);
-				err.email[0].should.equal('Must be a valid email address');
-				err.email[1].should.equal('This field is required');
+				err.email[0].should.equal('This field is required');
+				err.email[1].should.equal('Must be a valid email address');
 				done();
 			});
 		});
