@@ -367,4 +367,53 @@ describe('Validators', function() {
 			validators.boolean().getErrorMessage().should.equal('Must be a boolean');
 		});
 	});
+
+	describe('regex', function() {
+		it('should validate', function(done) {
+			validators.regex(/^foo.+$/).validate('foobar', null, function(err) {
+				should.not.exist(err);
+				validators.regex(/^foo.+$/).validate('barfoo', null, function(err) {
+					err.should.equal(true);
+					done();
+				});
+			});
+		});
+
+		it('should get error message', function() {
+			validators.regex(/foo/i).getErrorMessage().should.equal('Must match regular expression "/foo/i"');
+		});
+	});
+
+	describe('email', function() {
+		it('should validate normal email address', function(done) {
+			validators.email().validate('foo@example.com', null, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should validate email address with goofy characters', function(done) {
+			validators.email().validate('foo+!@#$%^&*&()~`-=+_/.,\\][}{\';":?>< bar@example.com', null, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('should require a "@" and a "."', function(done) {
+			validators.email().validate('foo.com', null, function(err) {
+				err.should.equal(true);
+				validators.email().validate('foo@example', null, function(err) {
+					err.should.equal(true);
+					validators.email().validate('@foo.com', null, function(err) {
+						err.should.equal(true);
+						done();
+					});
+				});
+			});
+		});
+
+		it('should get error message', function() {
+			validators.email().getErrorMessage().should.equal('Must be a valid email address');
+		});
+	});
 });

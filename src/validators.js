@@ -94,6 +94,33 @@ var validators = {
 				return 'Must be a boolean';
 			}
 		};
+	},
+	regex: function(regex) {
+		return {
+			validate: function(value, context, callback) {
+				if (typeof(value) !== 'string') {
+					callback(true);
+					return;
+				}
+
+				callback(regex.test(value) ?  null : true);
+			},
+			getErrorMessage: function() {
+				return 'Must match regular expression "' + regex.toString() + '"';
+			}
+		};
+	},
+
+	email: function() {
+		var validator = validators.regex(/^.+@.+\..+$/);
+		return {
+			validate: function(value, context, callback) {
+				validator.validate(value, context, callback);
+			},
+			getErrorMessage: function() {
+				return 'Must be a valid email address';
+			}
+		};
 	}
 };
 
