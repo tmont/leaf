@@ -57,7 +57,5 @@ EntityValidator.prototype = {
 	}
 };
 
-
-
 exports.Factory = ValidatorFactory;
 exports.EntityValidator = EntityValidator;
