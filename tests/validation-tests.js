@@ -238,6 +238,29 @@ describe('Validation', function() {
 				err.username[0].should.equal('Must be between 3 and 30 characters');
 
 				err.should.have.property('email');
+				err.email.should.have.length(1);
+				err.email[0].should.equal('This field is required');
+				done();
+			});
+		});
+
+		it('should validate entity and aggregate all errors', function(done) {
+			var validator = new leaf.Validator(User),
+				user = new User();
+
+			user.username = 'x';
+
+			validator.validate(user, true, function(err) {
+				should.exist(err);
+				err.should.have.property('role');
+				err.role.should.have.length(1);
+				err.role[0].should.equal('Must be "admin", "mod" or "user"');
+
+				err.should.have.property('username');
+				err.username.should.have.length(1);
+				err.username[0].should.equal('Must be between 3 and 30 characters');
+
+				err.should.have.property('email');
 				err.email.should.have.length(2);
 				err.email[0].should.equal('This field is required');
 				err.email[1].should.equal('Must be a valid email address');

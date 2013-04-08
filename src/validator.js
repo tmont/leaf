@@ -86,10 +86,15 @@ function EntityValidator(ctor, factory) {
 }
 
 EntityValidator.prototype = {
-	validate: function(entity, callback) {
+	validate: function(entity, doNotStopOnFail, callback) {
 		var self = this,
 			toValidate = Object.keys(entity),
 			errors = null;
+
+		if (typeof(doNotStopOnFail) === 'function') {
+			callback = doNotStopOnFail;
+			doNotStopOnFail = false;
+		}
 
 		(function validate(property) {
 			 if (!property) {
@@ -100,7 +105,7 @@ EntityValidator.prototype = {
 				 return;
 			 }
 
-			self.validateProperty(entity, property, function(err) {
+			self.validateProperty(entity, property, doNotStopOnFail, function(err) {
 				if (err) {
 					if (!errors) {
 						errors = {};
@@ -116,7 +121,7 @@ EntityValidator.prototype = {
 		})(toValidate.shift());
 	},
 
-	validateProperty: function(entity, property, callback) {
+	validateProperty: function(entity, property, doNotStopOnFail, callback) {
 		var validators = this.properties[property],
 			errors = [],
 			value = entity[property];
@@ -136,6 +141,13 @@ EntityValidator.prototype = {
 
 			validator.validate(value, entity, function(err) {
 				err && errors.push(validator.getErrorMessage());
+				if (errors.length && !doNotStopOnFail) {
+					process.nextTick(function() {
+						callback(errors);
+					});
+					return;
+				}
+
 				process.nextTick(function() {
 					validate(validators.shift());
 				});
