@@ -123,15 +123,6 @@ describe('Validation', function() {
 			factoryChecked.should.equal(true);
 		});
 
-		it('should throw if default factory cannot create validator', function() {
-			function Foo() {
-				/** @validator baz */
-				this.foo = 'bar';
-			}
-
-			(function() { new leaf.Validator(Foo); }).should.throwError('Cannot create validator "baz"');
-		});
-
 		it('with single line comment', function() {
 			function Foo() {
 				// /** @validator foo */
@@ -155,6 +146,37 @@ describe('Validation', function() {
 
 			var validator = new leaf.Validator(Foo, factory);
 			validator.properties.should.eql({ });
+		});
+	});
+
+	describe('factory', function() {
+		it('should throw if validator does not exist', function() {
+			(function() {
+				new leaf.Factory({}).create('foo');
+			}).should.throwError('Cannot create validator "foo"');
+		});
+
+		it('should create validator', function() {
+			var map = {
+				foo: function(arg1, arg2) {
+					this.arg1 = arg1;
+					this.arg2 = arg2;
+				}
+			};
+
+			var validator = new leaf.Factory(map).create('foo', [ 'foo', 42 ]);
+			should.exist(validator);
+			validator.should.have.property('arg1', 'foo');
+			validator.should.have.property('arg2', 42);
+		});
+
+		it('should use bundled validators as map if not given', function() {
+			var factory = new leaf.Factory(),
+				validators = require('../src/validators');
+
+			Object.keys(validators).forEach(function(name) {
+				factory.map.should.have.property(name);
+			});
 		});
 	});
 });
