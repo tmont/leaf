@@ -1,0 +1,26 @@
+{
+	"name": "leaf",
+	"version": "0.0.1",
+	"description": "A validation framework based on inline comments",
+	"keywords": [ "validation", "validator" ],
+	"directories": {
+		"lib": "src"
+	},
+
+	"author": "Tommy Montgomery <tmont@tmont.com> (http://tmont.com/)",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tmont/leaf.git"
+	},
+
+	"dependencies": {},
+
+	"devDependencies": {
+		"mocha": "1.8.1",
+		"should": "1.2.2"
+	},
+
+	"scripts": {
+		"test": "node_modules/.bin/mocha -R spec tests"
+	}
+}
