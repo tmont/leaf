@@ -121,6 +121,27 @@ var validators = {
 				return 'Must be a valid email address';
 			}
 		};
+	},
+
+	values: function(values) {
+		if (values.length === 0) {
+			throw new Error('values must have at least one element');
+		}
+
+		return {
+			validate: function(value, context, callback) {
+				callback(values.indexOf(value) !== -1 ? null : true);
+			},
+			getErrorMessage: function() {
+				if (values.length === 1) {
+					return 'Must be "' + values[0] + '"';
+				}
+
+				return 'Must be ' +
+					'"' + values.slice(0, -1).join('", "') + '" ' +
+					'or "' + values[values.length - 1] + '"';
+			}
+		};
 	}
 };
 

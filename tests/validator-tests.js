@@ -416,4 +416,48 @@ describe('Validators', function() {
 			validators.email().getErrorMessage().should.equal('Must be a valid email address');
 		});
 	});
+
+	describe('values', function() {
+		it('should validate list of values', function(done) {
+			var obj = {};
+			var validator = validators.values([ 'foo', 'bar', 42, obj ]);
+			validator.validate('foo', null, function(err) {
+				should.not.exist(err);
+				validator.validate('bar', null, function(err) {
+					should.not.exist(err);
+					validator.validate(42, null, function(err) {
+						should.not.exist(err);
+						validator.validate(obj, null, function(err) {
+							should.not.exist(err);
+
+							//failures
+							validator.validate('baz', null, function(err) {
+								err.should.equal(true);
+								validator.validate({}, null, function(err) {
+									err.should.equal(true);
+									done();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		it('should not allow empty lists', function() {
+			(function() { validators.values([]); }).should.throwError('values must have at least one element');
+		});
+
+		it('should get error message with one value', function() {
+			validators.values([ 'foo' ]).getErrorMessage().should.equal('Must be "foo"');
+		});
+
+		it('should get error message with two values', function() {
+			validators.values([ 'foo', 'bar' ]).getErrorMessage().should.equal('Must be "foo" or "bar"');
+		});
+
+		it('should get error message with more than two values', function() {
+			validators.values([ 'foo', 'bar', 'baz' ]).getErrorMessage().should.equal('Must be "foo", "bar" or "baz"');
+		});
+	});
 });
