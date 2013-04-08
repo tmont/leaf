@@ -1,8 +1,7 @@
 module.exports = {
-	length: function(arg) {
-		var args = arg.split(','),
-			min = parseFloat((/\d+/.exec(args[0]) || '')[0]),
-			max = parseFloat((/\d+/.exec(args[1]) || '')[0]);
+	length: function(min, max) {
+		min = parseFloat(min);
+		max = parseFloat(max);
 
 		if (isNaN(min)) {
 			min = -Infinity;
@@ -31,8 +30,7 @@ module.exports = {
 			}
 		};
 	},
-	required: function(arg) {
-		var doNotTrimWhitespace = typeof(arg) === 'string' ? arg === 'true' : !!arg;
+	required: function(doNotTrimWhitespace) {
 		return {
 			validate: function(value, context, callback) {
 				if (typeof(value) === 'string' && !doNotTrimWhitespace) {
