@@ -1,5 +1,5 @@
-module.exports = {
-	length: function(min, max) {
+var validators = {
+	range: function(min, max) {
 		min = parseFloat(min);
 		max = parseFloat(max);
 
@@ -21,12 +21,12 @@ module.exports = {
 				if (min !== -Infinity && max !== Infinity) {
 					message += 'between ' + min + ' and ' + max;
 				} else if (min !== -Infinity) {
-					message += 'longer than ' + min;
+					message += 'greater than ' + min;
 				} else {
-					message += 'shorter than ' + max;
+					message += 'less than ' + max;
 				}
 
-				return message + ' characters';
+				return message;
 			}
 		};
 	},
@@ -42,5 +42,27 @@ module.exports = {
 				return 'This field is required';
 			}
 		};
+	},
+	length: function(min, max) {
+		var length = validators.range(min, max);
+
+		return {
+			validate: function(value, context, callback) {
+				if (typeof(value) === 'string' || (typeof(value) === 'object' && 'length' in value)) {
+					length.validate(value.length, context, callback);
+					return;
+				}
+
+				callback(true);
+			},
+			getErrorMessage: function() {
+				return length.getErrorMessage()
+					.replace('less', 'shorter')
+					.replace('greater', 'longer') +
+					' characters';
+			}
+		};
 	}
 };
+
+module.exports = validators;
