@@ -21,7 +21,7 @@ Say you wanted a user model with the following requirements:
 1. `email` - must be present, and a valid email address
 2. `username` - must be present, between 3 and 30 characters and consist of
    only letters, numbers and the underscore
-3. `role` - must be exactly one of "admin", "mod" or "user"
+3. `role` - must be exactly one of "admin", "mod" or "user", or not given
 
 You could represent all of these requirements with the following constructor:
 ```javascript
@@ -40,6 +40,7 @@ function User() {
 	this.username = '';
 
 	/**
+	 * @validator optional
 	 * @validator values([ 'admin', 'mod', 'user' ])
 	 */
 	this.role = null;
@@ -49,9 +50,12 @@ function User() {
 And you could perform validation on it simply like this:
 ```javascript
 var leaf = require('leaf-validation'),
-	userValidator = new leaf.Validator(User);
+	userValidator = new leaf.Validator(User),
+	user = new User();
 
-userValidator.validate(new User(), function(err) {
+user.role = 'foo';
+
+userValidator.validate(, function(err) {
 	if (err) {
 		console.dir(err);
 		return;
@@ -70,6 +74,16 @@ userValidator.validate(new User(), function(err) {
 */
 ```
 
+### `required` and `optional`
+All of a property's validators are run during validation unless explicitly stated
+as `optional`. In effect, the `required` validator is implicit, but
+it's use is recommended so that the correct error message is
+delivered to the user.
+
+So, if you want to set up validation on a property, but you only want it
+the validators to be run if the value is actually given, you would use
+the `optional` validator.
+
 ### Validators
 There are a bunch of built-in validators that will cover most simple cases.
 You can of course build your own.
@@ -83,6 +97,7 @@ Bundled validators:
 * `required`: validates that a value must exist. A value exists if it is truthy:
   the result of `!!value` is `true`
 	* `required(true)`: does not trim whitespace
+* `optional`: stops validation if the value is not present; same signature as `required`
 * `regex`: validates a string against a regular expression
 	* `regex(/^\w{3,}$/)` - must consist of letters, numbers and underscore, and be at
 	  least 3 characters long
