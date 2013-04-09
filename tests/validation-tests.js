@@ -222,6 +222,19 @@ describe('Validation', function() {
 			});
 		});
 
+		it('should validate entity successfully without optional property', function(done) {
+			var validator = new leaf.Validator(User),
+				user = new User();
+
+			user.email = 'foo@bar.com';
+			user.username = 'tmont';
+			user.role = null;
+			validator.validate(user, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
 		it('should validate entity and aggregate errors', function(done) {
 			var validator = new leaf.Validator(User),
 				user = new User();

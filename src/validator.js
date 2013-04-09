@@ -142,7 +142,7 @@ EntityValidator.prototype = {
 			validator.validate(value, entity, function(err, stopValidation) {
 				err && errors.push(validator.getErrorMessage());
 				if (stopValidation || (errors.length && !doNotStopOnFail)) {
-					process.nextTick(function() { callback(errors); });
+					process.nextTick(function() { callback(errors.length ? errors : null); });
 					return;
 				}
 
