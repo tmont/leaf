@@ -6,7 +6,7 @@ It parses doc comments out of a constructor function to identify
 how to validate each property of an object.
 
 ## Installation
-Install via NPM: `npm install leaf`
+Install via NPM: `npm install leaf-validation`
 
 ## Usage
 This library is meant to be used to validate domain objects (i.e.
@@ -48,7 +48,7 @@ function User() {
 
 And you could perform validation on it simply like this:
 ```javascript
-var leaf = require('leaf'),
+var leaf = require('leaf-validation'),
 	userValidator = new leaf.Validator(User);
 
 userValidator.validate(new User(), function(err) {
