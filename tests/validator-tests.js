@@ -90,6 +90,10 @@ describe('Validators', function() {
 		it('should get error message for minimum and maximum', function() {
 			validators.range(3, 5).getErrorMessage().should.equal('Must be between 3 and 5');
 		});
+
+		it('should get error message for minimum and maximum when they are the same', function() {
+			validators.range(3, 3).getErrorMessage().should.equal('Must be exactly 3');
+		});
 	});
 
 	describe('length', function() {
@@ -174,6 +178,10 @@ describe('Validators', function() {
 
 		it('should get error message for minimum and maximum', function() {
 			validators.length(3, 5).getErrorMessage().should.equal('Must be between 3 and 5 characters');
+		});
+
+		it('should get error message for minimum and maximum when they are the same', function() {
+			validators.length(3, 3).getErrorMessage().should.equal('Must be exactly 3 characters');
 		});
 	});
 

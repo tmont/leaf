@@ -49,7 +49,9 @@ var validators = {
 			},
 			getErrorMessage: function() {
 				var message = 'Must be ';
-				if (min !== -Infinity && max !== Infinity) {
+				if (min === max) {
+					message += 'exactly ' + min;
+				} else if (min !== -Infinity && max !== Infinity) {
 					message += 'between ' + min + ' and ' + max;
 				} else if (min !== -Infinity) {
 					message += 'greater than ' + min;
