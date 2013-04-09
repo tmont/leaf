@@ -134,17 +134,15 @@ EntityValidator.prototype = {
 			if (!validator) {
 				//all done
 				process.nextTick(function() {
-					callback(errors.length ? errors : null)
+					callback(errors.length ? errors : null);
 				});
 				return;
 			}
 
-			validator.validate(value, entity, function(err) {
+			validator.validate(value, entity, function(err, stopValidation) {
 				err && errors.push(validator.getErrorMessage());
-				if (errors.length && !doNotStopOnFail) {
-					process.nextTick(function() {
-						callback(errors);
-					});
+				if (stopValidation || (errors.length && !doNotStopOnFail)) {
+					process.nextTick(function() { callback(errors); });
 					return;
 				}
 

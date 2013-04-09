@@ -1,4 +1,35 @@
 var validators = {
+	required: function(doNotTrimWhitespace) {
+		return {
+			validate: function(value, context, callback) {
+				if (typeof(value) === 'string' && !doNotTrimWhitespace) {
+					value = value.trim();
+				}
+				callback(!!value ? null : true);
+			},
+			getErrorMessage: function() {
+				return 'This field is required';
+			}
+		};
+	},
+
+	optional: function(doNotTrimWhitespace) {
+		var required = validators.required(doNotTrimWhitespace);
+		return {
+			validate: function(value, context, callback) {
+				required.validate(value, context, function(stopValidation) {
+					//if there is an error, then the value is not there,
+					//and we need to indicate that subsequent validators
+					//do not need to be run
+					callback(null, !!stopValidation);
+				});
+			},
+			getErrorMessage: function() {
+				return '';
+			}
+		};
+	},
+
 	range: function(min, max) {
 		min = parseFloat(min);
 		max = parseFloat(max);
@@ -30,19 +61,7 @@ var validators = {
 			}
 		};
 	},
-	required: function(doNotTrimWhitespace) {
-		return {
-			validate: function(value, context, callback) {
-				if (typeof(value) === 'string' && !doNotTrimWhitespace) {
-					value = value.trim();
-				}
-				callback(!!value ? null : true);
-			},
-			getErrorMessage: function() {
-				return 'This field is required';
-			}
-		};
-	},
+
 	length: function(min, max) {
 		var length = validators.range(min, max);
 
@@ -63,6 +82,7 @@ var validators = {
 			}
 		};
 	},
+
 	number: function(infinityIsANumber) {
 		return {
 			validate: function(value, context, callback) {
@@ -75,6 +95,7 @@ var validators = {
 			}
 		};
 	},
+
 	boolean: function(strict) {
 		return {
 			validate: function(value, context, callback) {
@@ -95,6 +116,7 @@ var validators = {
 			}
 		};
 	},
+
 	regex: function(regex) {
 		return {
 			validate: function(value, context, callback) {

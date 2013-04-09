@@ -203,6 +203,7 @@ describe('Validation', function() {
 			this.username = '';
 
 			/**
+			 * @validator optional
 			 * @validator values([ 'admin', 'mod', 'user' ])
 			 */
 			this.role = null;
@@ -229,9 +230,6 @@ describe('Validation', function() {
 
 			validator.validate(user, function(err) {
 				should.exist(err);
-				err.should.have.property('role');
-				err.role.should.have.length(1);
-				err.role[0].should.equal('Must be "admin", "mod" or "user"');
 
 				err.should.have.property('username');
 				err.username.should.have.length(1);
@@ -249,6 +247,7 @@ describe('Validation', function() {
 				user = new User();
 
 			user.username = 'x';
+			user.role = 'foo';
 
 			validator.validate(user, true, function(err) {
 				should.exist(err);

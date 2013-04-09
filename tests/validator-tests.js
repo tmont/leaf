@@ -225,6 +225,32 @@ describe('Validators', function() {
 		});
 	});
 
+	describe('optional', function() {
+		it('should continue validation if value is present', function(done) {
+			validators.optional().validate('foo', null, function(err, stopValidation) {
+				should.not.exist(err);
+				stopValidation.should.equal(false);
+				done();
+			});
+		});
+
+		it('should stop validation if value is not present', function(done) {
+			validators.optional().validate('', null, function(err, stopValidation) {
+				should.not.exist(err);
+				stopValidation.should.equal(true);
+				done();
+			});
+		});
+
+		it('should not strip whitespace', function(done) {
+			validators.optional(true).validate('  ', null, function(err, stopValidation) {
+				should.not.exist(err);
+				stopValidation.should.equal(false);
+				done();
+			});
+		});
+	});
+
 	describe('number', function() {
 		it('should validate integer', function(done) {
 			validators.number().validate(42, null, function(err) {
