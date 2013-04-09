@@ -99,9 +99,7 @@ EntityValidator.prototype = {
 		(function validate(property) {
 			 if (!property) {
 				 //all done
-				 process.nextTick(function() {
-					 callback(errors);
-				 });
+				 process.nextTick(function() { callback(errors); });
 				 return;
 			 }
 
