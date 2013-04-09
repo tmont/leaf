@@ -1,22 +1,9 @@
 # leaf
 [![Build Status](https://travis-ci.org/tmont/leaf.png)](https://travis-ci.org/tmont/leaf)
 
-Leaf is a simple validation framework. Here's how you use it:
-
-```javascript
-var leaf = require('leaf');
-
-var length3To5 = leaf.validators.length(3, 5),
-	value = Math.random() * 10;
-length3To5.validate(value, null, function(err) {
-	if (err) {
-		console.log(length3To5.getErrorMessage());
-		return;
-	}
-
-	console.log(value + ' is valid!');
-});
-```
+Leaf is a simple validation framework for validating models.
+It parses doc comments out of a constructor function to identify
+how to validate each property of an object.
 
 ## Installation
 Install via NPM: `npm install leaf`
