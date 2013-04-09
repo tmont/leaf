@@ -1,6 +1,6 @@
 {
 	"name": "leaf-validation",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "A validation framework based on inline comments",
 	"keywords": [ "validation", "validator" ],
 	"directories": {
